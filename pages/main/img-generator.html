@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0 " />
+        <title> AI Image Generator | CodingNepal</title>
+        <meta name="monetag" content="a1c73b8c3891d6d8e994b3e27ca4317b">
+        <!-- Linking Font Awaesome Icons -->
+         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* Importing Google Fonts - Inter */
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+:root {
+    --color-primary: #5C56E1;
+    --color-primary-dark: #5b21b6;
+    --color-accent: #8B5CF6;
+    --color-card: #FFFFFF;
+    --color-input: #F1F1FF;
+    --color-text: #09090E;
+    --color-placeholder: #5C5A87;
+    --color-border: #D4D4ED;
+    --color-gradient: linear-gradient(135deg, #5C56E1, #8B5CF6);
+}
+
+body.dark-theme {
+  --color-card: #1E293B;
+  --color-input: #141B2D;
+  --color-text: #F3F4F6;
+  --color-placeholder: #A3B6DC;
+  --color-border: #334155;
+
+  background: var(--color-card);
+  background-image: radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 35%), radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.15) 0%, transparent 35%), radial-gradient(circle at 50% 80%, rgba(99, 102, 241, 0.1) 0%, transparent 40%);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Inter", sans-serif;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    color:  var(--color-text);
+    background: linear-gradient(#E9E9FF, #C8C7FF);
+}
+
+.container {
+    width: 900px;
+    padding: 32px;
+    position: relative;
+    border-radius: 23px;
+    overflow: hidden;
+    background: var(--color-card);
+    box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.1);
+}
+
+body.dark-theme .container {
+    border: 1px solid var(--color-border);
+}
+
+.container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: var(--color-gradient);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header .logo-wrapper {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+}
+
+.header .logo-wrapper .logo {
+    height: 55px;
+    width: 56px;
+    display: flex;
+    color: #fff;
+    font-size: 1.35rem;
+    flex-shrink: 0;
+    border-radius: 15px;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-gradient);
+}
+
+.header .logo-wrapper h1 {
+    font-size: 1.9rem;
+    font-weight: 700;
+}
+
+.header .theme-toggle {
+    height: 43px;
+    width: 43px;
+    border-radius: 50%;
+    font-size: 1.05rem;
+    cursor: pointer;
+    display: flex;
+    color: var(--color-placeholder);
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-input);
+    border: 1px solid var(--color-border);
+    transition: all 0.3s ease;
+}
+
+.header .theme-toggle:hover {
+    color: var(--color-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgb(0, 0, 0, 0.1);
+}
+
+.main-content {
+    margin: 35px 0 5px;
+} 
+
+.main-content .prompt-container {
+    width: 100%;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.prompt-container .prompt-input {
+    width: 100%;
+    resize: vertical;
+    line-height: 1.6;
+    font-size: 1.05rem;
+    min-height: 120px;
+    padding: 16px 20px;
+    border-radius: 15px;
+    color: var(--color-text);
+    background: var(--color-input);
+    border: 1px solid var(--color-border);
+    transition: all 0.3s ease;
+}
+
+
+.prompt-container .prompt-input::placeholder {
+    color: var(--color-placeholder);
+}
+  
+.prompt-container .prompt-input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow:  0 0 0 4px rgba(139, 92, 246, 0.15);
+}
+
+.prompt-container .prompt-btn {
+    position: absolute;
+    right: 15px;
+    bottom: 15px;
+    height: 35px;
+    width: 35px;
+    border: none;
+    color: #fff;
+    font-size: 0.75rem;
+    border-radius: 50%;
+    opacity: 0.8;
+    cursor: pointer;
+    background: var(--color-gradient);
+    transition: all 0.3s ease;
+}
+
+.prompt-container .prompt-btn:hover {
+    opacity: 1;
+    transform: translate(-2px);
+    box-shadow:  0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.main-content .prompt-actions {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: 1.2fr 1fr 1.1fr 1fr;
+}
+
+.prompt-actions .select-wrapper {
+    position: relative;
+}
+
+.prompt-actions .select-wrapper::after {
+    content: "\f078";
+    font-family: "Font Awesome 6 Free";
+    font-weight: bold;
+    position: absolute;
+    font-size: 0.9rem;
+    right: 10px;
+    top: 30%;
+    padding-left: 7px;
+    pointer-events: none;
+    background: var(--color-input);
+    color: var(--color-placeholder);
+    transform: translate(-50%);
+}
+
+.prompt-actions :where(.custom-select, .generate-btn) {
+    cursor: pointer;
+    padding: 12px 20px;
+    font-size: 1rem;
+    border-radius: 10px;
+    background: var(--color-input);
+    border: 1px solid var(--color-border);
+    transition: all 0.3s ease;
+}
+
+.prompt-actions .custom-select {
+    width: 100%;
+    outline: none;
+    height: 100%;
+    appearance: none;
+    color: var(--color-text);
+}
+
+.prompt-actions .custom-select:is(:focus, :hover) {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+.prompt-actions .generate-btn {
+    display: flex;
+    gap: 12px;
+    margin-left: auto;
+    font-weight: 500;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 25px;
+    border: none;
+    color: #fff;
+    background: var(--color-gradient);
+}
+
+.prompt-actions .generate-btn:disabled {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.prompt-actions .generate-btn:hover {
+    transform: translate(-2px);
+    box-shadow: 0 4px 10px rgba(109, 40, 217, 0.3);
+}
+
+.main-content .gallery-grid:has(.img-card) {
+    margin-top: 30px;
+}
+
+.main-content .gallery-grid {
+    display: grid;
+    gap: 15px;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+}
+
+.gallery-grid .img-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 1;
+    border-radius: 16px;
+    background: var(--color-input);
+    border: 1px solid var(--color-border);
+    transition: all 0.5s ease;
+}
+
+.gallery-grid .img-card:not(.loading, .error):hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);    
+}
+
+.gallery-grid .img-card .result-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.gallery-grid .img-card:is(.loading, .error) :is(.result-img, .img-overlay) {
+    display: none;
+} 
+
+.gallery-grid .img-card .img-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    display: flex;
+    opacity: 0;
+    pointer-events: none;
+    justify-content: flex-end;
+    justify-content: flex-end;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+    transition: all 0.3s ease;
+}
+
+.gallery-grid .img-card:hover .img-overlay {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.gallery-grid .img-card .img-download-btn {
+    height: 45px;
+    width: 45px;
+    color: #fff;
+    backdrop-filter: 5px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.25);
+    transition: all 0.3;
+}
+
+.gallery-grid .img-card .img-download-btn:hover {
+    transform: scale(1.05);
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.gallery-grid .img-card .status-container {
+    padding: 15px;
+    display: none;
+    gap: 13px;
+    flex-direction: column;
+    align-items: center; 
+}
+
+.gallery-grid .img-card:where(.loading, .error) .status-container {
+    display: flex;
+}
+
+.gallery-grid .img-card.loading .status-container i,
+.gallery-grid .img-card.error .spinner {
+    display: none;
+}
+
+.gallery-grid .img-card.error .status-container i {
+    font-size: 1.7rem;
+    color: #ef4444;
+}
+
+.gallery-grid .img-card.loading .spinner {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: 3px solid var(--color-border);
+    border-top-color: var(--color-primary);
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }    
+}
+
+.gallery-grid .img-card .status-text {
+    font-size: 0.85rem;
+    text-align: center;
+    color: var(--color-placeholder);
+}
+    </style>
+    </head>
+    <body>
+        <div class="container">
+
+            <!-- Header -->
+            <header class="header">
+                <div class="logo-wrapper">
+                    <div class="logo">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </div>
+                    <h1>AI Image Generator</h1>
+                </div>
+
+                <button class="theme-toggle">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+            </header>
+        
+        <div class="main-content">
+            <form action="#" class="prompt-form">
+                <!-- Prompt Container-->
+                 <div class="prompt-container">
+                    <textarea class="prompt-input" placeholder="Describe your imagination in detail..." required autofocus></textarea>
+                    <button type="button" class="prompt-btn">
+                        <i class="fa-solid fa-dice"></i>
+                    </button>
+                 </div>
+
+                 <!-- Prompt Actions/Buttons -->
+                 <div class="prompt-actions">
+                    <div class="select-wrapper">
+                        <select class="custom-select" id="model-select" required>
+                            <option value="" selected disabled>Select Model</option>
+                            <option value="black-forest-labs/FLUX.1-dev">FLUX.1-dev</option>
+                            <option value="black-forest-labs/FLUX.1-schnell">FLUX.1-schnell</option>
+                            <option value="stabilityai/stable-diffusion-xl-base-1.0">Stable Diffusion XL</option>
+                            <option value="runwayml/stable-diffusion-v1-5">Stable Diffusion v1.5</option>
+                            <option value="prompthero/openjourney">Openjourney</option>
+                        </select>
+                    </div>
+
+                    <div class="select-wrapper">
+                        <select class="custom-select" id="count-select" required>
+                            <option value="" selected disabled>Image Count</option>
+                            <option value="1">1 Image</option>
+                            <option value="2">2 Images</option>
+                            <option value="3">3 Images</option>
+                            <option value="4">4 Images</option>
+                        </select>
+                    </div>
+
+                    <div class="select-wrapper">
+                        <select class="custom-select" id="ratio-select" required>
+                            <option value="" selected disabled>Aspect Ratio</option>
+                            <option value="1/1">Square (1:1)</option>
+                            <option value="16/9">Landscape (16:9)</option>
+                            <option value="9/16">Portrait (9:16)</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="generate-btn">
+                        <i class="fa-solid fa-wand-sparkles"></i>
+                        Generate
+                    </button>
+                 </div>
+
+                 <!-- Result Gallery Grid -->
+                <div class="gallery-grid"></div>
+            </form>
+        </div>
+        </div>
+
+        <script>
+            const themeToggle = document.querySelector('.theme-toggle');
+const promptInput = document.querySelector('.prompt-input');
+const promptForm = document.querySelector('.prompt-form');
+const promptBtn = document.querySelector('.prompt-btn');
+const generateBtn = document.querySelector('.generate-btn');
+const modelSelect = document.querySelector('#model-select');
+const countSelect = document.querySelector('#count-select');
+const ratioSelect = document.querySelector('#ratio-select');
+const gridGallery = document.querySelector('.gallery-grid');
+
+const API_KEY = "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"; //Hugging Face API key
+
+const examplePrompts = [
+  "A magic forest with glowing plants and fairy homes among giant mushrooms",
+  "An old steampunk airship floating through golden clouds at sunset",
+  "A future Mars colony with glass domes and gardens against red mountains",
+  "A dragon sleeping on gold coins in a crystal cave",
+  "An underwater kingdom with merpeople and glowing coral buildings",
+  "A floating island with waterfalls pouring into clouds below",
+  "A witch's cottage in fall with magic herbs in the garden",
+  "A robot painting in a sunny studio with art supplies around it",
+  "A magical library with floating glowing books and spiral staircases",
+  "A Japanese shrine during cherry blossom season with lanterns and misty mountains",
+  "A cosmic beach with glowing sand and an aurora in the night sky",
+  "A medieval marketplace with colorful tents and street performers",
+  "A cyberpunk city with neon signs and flying cars at night",
+  "A peaceful bamboo forest with a hidden ancient temple",
+  "A giant turtle carrying a village on its back in the ocean",
+];
+
+// Set theme based on saved preference or system default
+(() => {
+    const savedTheme = localStorage.getItem("theme");
+    const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+    const isDarkTheme = savedTheme === "dark" || (!savedTheme && systemPrefersDark );
+    document.body.classList.toggle("dark-theme", isDarkTheme);
+    themeToggle.querySelector('i').className = isDarkTheme ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+
+})();
+// Switch between light and dark themes
+const toggleTheme = () => {
+    const isDarkTheme = document.body.classList.toggle("dark-theme");
+    localStorage.setItem("theme", isDarkTheme ? "dark" : "light");
+    themeToggle.querySelector('i').className = isDarkTheme ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+};
+
+// Calculate width/height based on chosen ratio
+const getImageDimensions = (aspectRatio, baseSize = 512) => {
+    const [width, height] = aspectRatio.split("/").map(Number);
+    const scaleFactor = baseSize / Math.sqrt(width * height);
+
+    let calculatedWidth = Math.round(width * scaleFactor);
+    let calculatedHeight = Math.round(height * scaleFactor);
+    
+    //Ensure dimensions are multiples of 16 (AI model requirements)
+    calculatedWidth = Math.floor(calculatedWidth / 16) * 16;
+    calculatedHeight = Math.floor(calculatedHeight / 16) * 16;
+
+    return { width: calculatedWidth, height: calculatedHeight};
+};
+
+// Replace loading spinner with the actual image
+const updateImageCard = (imgIndex, imgUrl) => {
+    const imgCard = document.getElementById(`img-card-${imgIndex}`);
+    if(!imgCard) return;
+
+    imgCard.classList.remove('loading');
+    imgCard.innerHTML = `<img src="${imgUrl}" class="result-img" />
+                        <div class="img-overlay">
+                            <a href="${imgUrl}" class="img-download-btn" download="${Date.now()}.png" >
+                                <i class="fa-solid fa-download"></i>
+                            </a>
+                        </div>` ;
+}
+
+// Show error message in image card
+const showErrorInCard = (imgIndex, errorMessage) => {
+    const imgCard = document.getElementById(`img-card-${imgIndex}`);
+    if(!imgCard) return;
+
+    imgCard.classList.remove('loading');
+    imgCard.classList.add('error');
+    imgCard.innerHTML = `<div class="status-container">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <p class="status-text">${errorMessage}</p>
+                        </div>`;
+}
+
+// Send request to Hugging Face API to create images
+const generateImages = async (selectedModel, imageCount, aspectRatio, promptText) => {
+    const MODEL_URL = `https://api-inference.huggingface.co/models/${selectedModel}`;
+    const {width, height} = getImageDimensions(aspectRatio);
+    generateBtn.setAttribute("disabled", true); 
+
+    // Create an array of image generation promises
+    const imagePromises = Array.from({length: imageCount}, async(_, i) => {
+        try {
+            const response = await fetch(MODEL_URL, {
+                headers: {
+                    Authorization: `Bearer ${API_KEY}`,
+                    "Content-Type": "application/json",
+                    "x-use-cache": "false",
+                },
+                method: "POST",
+                body: JSON.stringify({
+                    inputs: promptText,
+                    parameters: {width, height},
+                    options: {wait_for_model: true, use_cache: false},
+                }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || "Failed to generate image");
+            }
+
+            // Convert response to an image URL and update the image card
+            const result = await response.blob();
+            const imgUrl = URL.createObjectURL(result);
+            updateImageCard(i, imgUrl);
+        } catch (error) {
+            console.error("Error generating image:", error);
+            showErrorInCard(i, error.message || "Generation failed");
+        }
+    });
+    
+    await Promise.allSettled(imagePromises);
+    generateBtn.removeAttribute("disabled");
+};
+
+// Create placeholder cards with loading spinners
+const createImageCards = (imageCount, aspectRatio) => {
+    gridGallery.innerHTML = "";
+    
+    for (let i = 0; i < imageCount; i++) {
+        gridGallery.innerHTML += `<div class="img-card loading" id="img-card-${i}" style="aspect-ratio: ${aspectRatio}">
+                        <div class="status-container">
+                            <div class="spinner"></div>
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <p class="status-text">Generating...</p>
+                        </div>
+                    </div>`;
+    }
+};
+
+//Handle form submission
+const handleFormSubmit = (e) => {
+    e.preventDefault();
+
+    // Get form values
+    const selectedModel = modelSelect.value;
+    const imageCount = parseInt(countSelect.value) || 1;
+    const aspectRatio = ratioSelect.value || "1/1";
+    const promptText = promptInput.value.trim();
+
+    if (!selectedModel || !promptText) {
+        alert("Please select a model and enter a prompt");
+        return;
+    }
+
+    createImageCards(imageCount, aspectRatio);
+    generateImages(selectedModel, imageCount, aspectRatio, promptText);
+}
+
+// Fill prompt input with random example
+promptBtn.addEventListener("click", () => {
+    const prompt = examplePrompts[Math.floor(Math.random() * examplePrompts.length)];
+    promptInput.value = prompt;
+    promptInput.focus();
+});
+
+promptForm.addEventListener("submit", handleFormSubmit);
+themeToggle.addEventListener('click', toggleTheme);
+        </script>
+    </body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tag Wallpapers - PixelWave</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="../../assets/css/main/back-to-top.css">
+
+    <!-- Page CSS -->
+    <link rel="stylesheet" href="../assets/css/wall-category.css">
+    <link rel="stylesheet" href="../assets/css/tag-wallpapers.css">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <!-- Animated Background -->
+    <div class="animated-bg"></div>
+    
+    <!-- Mobile Menu Button -->
+    <div class="mobile-menu-btn"></div>
+
+    <!-- Header -->
+    <div id="header"></div>
+
+    <!-- Hero Section -->
+    <section class="parallax-hero" id="category-hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 id="dynamic-title">Wallpapers Tag: <span id="tag-name"></span></h1>
+            <p>Discover all wallpapers with this tag</p>
+            
+            <!-- Search and Filter -->
+            <div class="advanced-search">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="smart-search" placeholder="Search wallpapers...">
+                </div>
+                
+                <div class="filter-panel">
+                    <div class="filter-option active" data-filter="all">All</div>
+                    <div class="filter-option" data-filter="portrait">
+                        <i class="fas fa-mobile-alt"></i> Portrait
+                    </div>
+                    <div class="filter-option" data-filter="landscape">
+                        <i class="fas fa-desktop"></i> Landscape
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Wallpapers Grid -->
+        <section class="wallpapers-section">
+            <div class="container">
+                <div class="wallpapers-grid" id="wallpapers-grid">
+                    <!-- Wallpapers will be loaded here by JavaScript -->
+                </div>
+
+                <!-- Loading Animation -->
+                <div class="loading-animation">
+                    <div class="loader"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pagination -->
+        <div class="pagination-container">
+            <div class="container">
+                <div class="pagination">
+                    <button id="prev-page" disabled><i class="fas fa-chevron-left"></i></button>
+                    <div class="page-numbers" id="page-numbers"></div>
+                    <button id="next-page"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Back to Top Button with SVG icon -->
+    <button class="back-to-top" aria-label="Back to top">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M12 4l-8 8h5v8h6v-8h5z"/>
+        </svg>
+    </button>
+
+    <!-- Footer -->
+    <div id="footer"></div>
+
+    <!-- Scripts -->
+    <script>
+        // Load header
+        fetch('../../pages/share/share-header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header').innerHTML = data;
+                initHeaderScripts();
+            });
+
+        // Load footer
+        fetch('../../pages/share/share-footer.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('footer').innerHTML = data;
+            });
+
+        function initHeaderScripts() {
+            // Mobile menu toggle functionality
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const mobileMenuClose = document.querySelector('.mobile-menu-close');
+            const overlay = document.querySelector('.overlay');
+
+            if(mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    mobileMenu.classList.add('active');
+                    overlay.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+            }
+
+            if(mobileMenuClose) {
+                mobileMenuClose.addEventListener('click', () => {
+                    mobileMenu.classList.remove('active');
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                });
+            }
+
+            if(overlay) {
+                overlay.addEventListener('click', () => {
+                    mobileMenu.classList.remove('active');
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                });
+            }
+        }
+    </script>
+
+    <!-- Tag Wallpapers JS -->
+    <script src="../assets/js/tag-wallpapers.js"></script>
+
+    <!-- Page JS -->
+    <script src="../../assets/js/main/back-to-top.js"></script>
+
+</body>
+</html>
